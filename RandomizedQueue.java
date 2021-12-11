@@ -102,10 +102,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     
     private class RandomIterator implements Iterator{
         
-        private int iteratorCount = 0;
+        private int iteratorCount = -1;
 
         @Override
         public boolean hasNext() {
+            
+            iteratorCount++;
+            System.out.println(iteratorCount);
 
             return iteratorCount < num;
         }
@@ -126,7 +129,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             }
             
             items[rand] = null;
-            iteratorCount++;
+
             return temp;
         }
         
@@ -143,18 +146,20 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         
         
         
-          for (int i = 0; i < 100; i++) { test.enqueue(i); }
+          for (int i = 0; i < 10; i++) { test.enqueue(i); }
           
-          for (int i = 0; i < 20; i++) { System.out.println(test.dequeue()); }
+          //for (int i = 0; i < 20; i++) { System.out.println(test.dequeue()); }
          
          
         test.sample();
-        test.size();
+        //System.out.println(test.size());
         test.isEmpty();
         
         Iterator<Integer> sample = test.iterator();
         
-        sample.next();
+        while (sample.hasNext()) {
+            System.out.println("\t" + sample.next());
+        }
           
           
         //test.enqueue(1);
