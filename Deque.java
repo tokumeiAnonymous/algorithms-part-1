@@ -1,132 +1,177 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class Deque<Item> implements Iterable<Item>{
+public class Deque<Item> implements Iterable<Item> {
 
-    private Item[] items;
-    private int first;
-    private int last;
+    private Node last;
+    private Node first;
+    private int num;
     
     
+    // construct an empty deque
     public Deque() {
-        items =(Item[]) new Object[1];
-        first = 0;
-        last = 1;
+        
+        first = new Node();
+        last = new Node();
+        num = 0;
     }
-    
+
+    // is the deque empty?
     public boolean isEmpty() {
         
-        return last == first;
+        return first == null;
     }
-    
+
+    // return the number of items on the deque
     public int size() {
         
-        return last - first;
+        return num;
     }
-    
+
+    // add the item to the front
     public void addFirst(Item item) {
         
-        if (first < 0) {
-            resizeFirst();
+        if (item == null) throw new IllegalArgumentException("You can't insert a null");
+        
+        Node temp = first;
+        first = new Node();
+        first.item = item;
+        first.next = temp;
+        
+        if (num == 0) {
+                last = first;
+        } else {
+            first.next.prev = first;
         }
         
-        /*
-         * This is to avoid the corner case
-         * when the array is empty and  the client decided
-         * to addFirst and addLast or 
-         * addLast and addFirst
-         * resulting to replacing the former by the latter
-         */
-        if (first == last) last++;      
-        
-        items[first--] = item;
+        num++;
     }
-    
-    private void resizeFirst() {
-        
-        int len = (last - first) * 2;
-        Item temp[] =(Item[]) new Object[len];
-        int tempFirst = (int) (0.25 * len);
-        
-        for (int j = 0, i = tempFirst; i < (last - first); i++) {
-            
-            temp[i] = items[j++];
-        }
-        
-        last = tempFirst + (last - first);
-        first = tempFirst;
-        items = temp;
-    }
-    
+
+    // add the item to the back
     public void addLast(Item item) {
         
-        if (last >= items.length) {
-            resizeLast();
+        if (item == null) throw new IllegalArgumentException("You can't insert a null");
+        
+        Node temp = last;
+        last = new Node();
+        last.item = item;
+        last.prev = temp;
+        
+        if (num == 0) {
+                first = last;
+        } else {
+            last.prev.next = last;
         }
         
-        /*
-         * This is to avoid the corner case
-         * when the array is empty and  the client decided
-         * to addFirst and addLast or 
-         * addLast and addFirst
-         * resulting to replacing the former by the latter
-         */
-        if (last == first) first--; 
-        
-        items[last++] = item;
+        num++;
+    }
 
-    }
-    
-    private void resizeLast() {
-        
-        int len = (last - first) * 2;
-        Item temp[] =(Item[]) new Object[len];
-        int tempFirst = (int) (0.25 * len);
-        
-        for (int j = 0, i = tempFirst; i < (last - first); i++) {
-            
-            temp[i] = items[j++];
-        }
-        
-        last = tempFirst + (last - first);
-        first = tempFirst;
-        items = temp;
-    }
-    
+    // remove and return the item from the front
     public Item removeFirst() {
         
-        return items[first++];
+        if (num == 0) throw new NoSuchElementException("The list is already empty!");
+        
+        Item item = first.item;
+        num--;
+        
+        if (num == 0) {
+            first = null;
+            last = null;
+            
+        } else {
+            Node temp = first.next;
+            first = new Node();
+            first = temp;
+        }
+        
+        
+        return item;
     }
-    
+
+    // remove and return the item from the back
     public Item removeLast() {
         
-        return items[last--];
+        if (num == 0) throw new NoSuchElementException("The list is already empty!");
+        
+        Item item = last.item;
+        num--;
+        
+        if (num == 0) {
+            first = null;
+            last = null;
+        } else {
+            Node temp = last.prev;
+            last = new Node();
+            last = temp;
+        }
+        
+        
+        return item;
     }
-    
-    @Override
+
+    // return an iterator over items in order from front to back
     public Iterator<Item> iterator(){
         
         return new DequeIterator();
     }
     
-    private class DequeIterator implements Iterator<Item>{
+    private class Node{
+        
+        private Item item;
+        private Node prev;
+        private Node next;
+        
+    }
+
+    private class DequeIterator implements Iterator{
+        
+        private int count = 0;
 
         @Override
         public boolean hasNext() {
 
-            return false;
+            count++;
+            
+            return count <= num;
         }
 
         @Override
-        public Item next() {
-
-            return null;
+        public Object next() {
+            
+            if(!hasNext()) throw new NoSuchElementException("The list is empty");
+            
+            Item item = first.item;
+            first = first.next;
+            
+            return item;
+        }
+        
+        public void remove() {
+            throw new UnsupportedOperationException("This is not allowed");
         }
         
     }
     
+    // unit testing (required)
     public static void main(String[] args) {
         
+        Deque<String> test = new Deque<String>();
+        test.addFirst("Testing");
+        //System.out.println(test.removeLast());
+        test.addFirst("Testing2");
+        //System.out.println(test.removeFirst());
+        //for (String item : test) {
+        //    System.out.println(item);
+        //}
+        String res1 = test.removeFirst();
+        String res2 = test.removeFirst();
+        test.isEmpty();
+        test.size();
+        
+        test.iterator();
+        
+        System.out.println(res1 + "\t" + res2);
+        
     }
-    
 
 }
