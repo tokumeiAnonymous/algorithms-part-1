@@ -129,17 +129,18 @@ public class Deque<Item> implements Iterable<Item> {
         @Override
         public boolean hasNext() {
             
+            current = current.next;
+            current.prev = null;
+            
             return current != null;
         }
 
         @Override
         public Object next() {
             
-            if(!hasNext()) throw new NoSuchElementException("The list is empty");
+            if(current == null) throw new NoSuchElementException("The list is empty");
             
             Item item = current.item;
-            current = current.next;
-            current.prev = null;
             
             return item;
         }
