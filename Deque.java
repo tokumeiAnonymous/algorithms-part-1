@@ -19,7 +19,7 @@ public class Deque<Item> implements Iterable<Item> {
     // is the deque empty?
     public boolean isEmpty() {
         
-        return first == null;
+        return num == 0;
     }
 
     // return the number of items on the deque
@@ -79,9 +79,9 @@ public class Deque<Item> implements Iterable<Item> {
             last = null;
             
         } else {
-            Node temp = first.next;
-            first = new Node();
-            first = temp;
+            
+            first = first.next;
+            first.prev = null;
         }
         
         
@@ -100,9 +100,8 @@ public class Deque<Item> implements Iterable<Item> {
             first = null;
             last = null;
         } else {
-            Node temp = last.prev;
-            last = new Node();
-            last = temp;
+           last = last.prev;
+           last.next = null;
         }
         
         
@@ -125,14 +124,12 @@ public class Deque<Item> implements Iterable<Item> {
 
     private class DequeIterator implements Iterator{
         
-        private int count = 0;
+        private Node current = first;
 
         @Override
         public boolean hasNext() {
-
-            count++;
             
-            return count <= num;
+            return current != null;
         }
 
         @Override
@@ -140,8 +137,9 @@ public class Deque<Item> implements Iterable<Item> {
             
             if(!hasNext()) throw new NoSuchElementException("The list is empty");
             
-            Item item = first.item;
-            first = first.next;
+            Item item = current.item;
+            current = current.next;
+            current.prev = null;
             
             return item;
         }
