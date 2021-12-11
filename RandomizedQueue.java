@@ -54,13 +54,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (num < 0.25 * items.length) resize(); 
         
         Item temp = null;
+        int rand = 0;
         
         while (temp == null) {
-            int rand = StdRandom.uniform(count);
+            
+            rand = StdRandom.uniform(count);
             temp = items[rand];
-            items[rand] = null;
-        
+            
             }
+        items[rand] = null;
         return temp;
     }
 
@@ -104,10 +106,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         @Override
         public boolean hasNext() {
-            
-            iteratorCount++;
 
-            return count < num;
+            return iteratorCount < num;
         }
 
         @Override
@@ -116,13 +116,17 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             if (iteratorCount > num) throw new NoSuchElementException("This list is empty");
             
             Item temp = null;
+            int rand = 0;
             
             while (temp == null) {
                 
-                int rand = StdRandom.uniform(count);
+                rand = StdRandom.uniform(count);
                 temp = items[rand];
             
             }
+            
+            items[rand] = null;
+            iteratorCount++;
             return temp;
         }
         
