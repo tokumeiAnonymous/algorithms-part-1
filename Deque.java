@@ -11,8 +11,8 @@ public class Deque<Item> implements Iterable<Item> {
     // construct an empty deque
     public Deque() {
         
-        first = new Node();
-        last = new Node();
+        first = null;
+        last = null;
         num = 0;
     }
 
@@ -125,6 +125,8 @@ public class Deque<Item> implements Iterable<Item> {
     private class DequeIterator implements Iterator<Item>{
         
         private Node current = first;
+        
+
 
         @Override
         public boolean hasNext() {
@@ -139,6 +141,8 @@ public class Deque<Item> implements Iterable<Item> {
             
             Item item = current.item;
             current = current.next;
+            
+            
             //current.prev = null;
             
             return item;
@@ -155,6 +159,8 @@ public class Deque<Item> implements Iterable<Item> {
         
         Deque<Integer> test = new Deque<Integer>();
         
+        System.out.println(test.iterator().hasNext());
+        
         for (int i = 0; i < 10; i++) { test.addLast(i); }
         
         System.out.println(test.size());
@@ -163,9 +169,14 @@ public class Deque<Item> implements Iterable<Item> {
         
         Iterator<Integer> iteratorTest = test.iterator();
         
+        System.out.println(test.iterator());
+        
+        
         while (iteratorTest.hasNext()) {
             System.out.println("\t" + iteratorTest.next());
         }
+        //iteratorTest.next();
+        
         
         for (int i = 0; i < 10; i++) { System.out.println(test.removeLast()); }
         
