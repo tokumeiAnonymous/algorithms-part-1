@@ -122,25 +122,24 @@ public class Deque<Item> implements Iterable<Item> {
         
     }
 
-    private class DequeIterator implements Iterator{
+    private class DequeIterator implements Iterator<Item>{
         
         private Node current = first;
 
         @Override
         public boolean hasNext() {
             
-            current = current.next;
-            current.prev = null;
-            
             return current != null;
         }
 
         @Override
-        public Object next() {
+        public Item next() {
             
             if(current == null) throw new NoSuchElementException("The list is empty");
             
             Item item = current.item;
+            current = current.next;
+            //current.prev = null;
             
             return item;
         }
@@ -154,22 +153,27 @@ public class Deque<Item> implements Iterable<Item> {
     // unit testing (required)
     public static void main(String[] args) {
         
-        Deque<String> test = new Deque<String>();
-        test.addFirst("Testing");
-        //System.out.println(test.removeLast());
-        test.addFirst("Testing2");
-        //System.out.println(test.removeFirst());
-        //for (String item : test) {
-        //    System.out.println(item);
-        //}
-        String res1 = test.removeFirst();
-        String res2 = test.removeFirst();
-        test.isEmpty();
-        test.size();
+        Deque<Integer> test = new Deque<Integer>();
         
-        test.iterator();
+        for (int i = 0; i < 10; i++) { test.addLast(i); }
         
-        System.out.println(res1 + "\t" + res2);
+        System.out.println(test.size());
+                 
+        System.out.println(test.isEmpty());
+        
+        Iterator<Integer> iteratorTest = test.iterator();
+        
+        while (iteratorTest.hasNext()) {
+            System.out.println("\t" + iteratorTest.next());
+        }
+        
+        for (int i = 0; i < 10; i++) { System.out.println(test.removeLast()); }
+        
+        for (int i = 0; i < 10; i++) { test.addFirst(i); }
+        
+        for (int i = 0; i < 10; i++) { System.out.println(test.removeFirst()); }
+        
+        iteratorTest.remove();
         
     }
 
