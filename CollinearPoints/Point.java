@@ -10,11 +10,14 @@
 
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
 
 public class Point implements Comparable<Point> {
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
+    //private int count;
 
     /**
      * Initializes a new point.
@@ -26,6 +29,7 @@ public class Point implements Comparable<Point> {
         /* DO NOT MODIFY */
         this.x = x;
         this.y = y;
+        //count = 0;
     }
 
     /**
@@ -60,6 +64,15 @@ public class Point implements Comparable<Point> {
      */
     public double slopeTo(Point that) {
         /* YOUR CODE HERE */
+       
+        //System.out.println(count++);
+        if (this.y == that.y && this.x == that.x) return Double.NEGATIVE_INFINITY; 
+        if (this.y == that.y) return 0;
+        if (this.x == that.x) return Double.POSITIVE_INFINITY; 
+        
+        double slope = (double) (this.y - that.y) / (this.x - that.y);
+        
+        return slope;
     }
 
     /**
@@ -76,6 +89,13 @@ public class Point implements Comparable<Point> {
      */
     public int compareTo(Point that) {
         /* YOUR CODE HERE */
+        if (this.y < that.y) return -1;
+        if (this.y > that.y) return 1;
+        if (this.y == that.y) {
+            if (this.x < that.x) return -1;
+            if (this.x > that.x)return 1; 
+        }
+        return 0;
     }
 
     /**
@@ -86,6 +106,18 @@ public class Point implements Comparable<Point> {
      */
     public Comparator<Point> slopeOrder() {
         /* YOUR CODE HERE */
+        return new SortBySlope();
+    }
+    
+    private class SortBySlope implements Comparator<Point> {
+        
+        public int compare (Point p1, Point p2) {
+            
+            if (slopeTo(p1) < slopeTo(p2)) return -1;
+            if (slopeTo(p1) > slopeTo(p2)) return 1;
+            return 0;
+        }
+        
     }
 
 
@@ -106,5 +138,8 @@ public class Point implements Comparable<Point> {
      */
     public static void main(String[] args) {
         /* YOUR CODE HERE */
+                
+        
     }
+
 }
