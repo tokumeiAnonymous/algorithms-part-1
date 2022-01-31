@@ -6,12 +6,18 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class BruteCollinearPoints {
     
-    //private Point[] points;
+    // private Point[] points;
     private LineSegment[] segments;
     
     public BruteCollinearPoints(Point[] points) {
         
         if (points == null) throw new IllegalArgumentException("Point can not be null");
+        
+        Arrays.sort(points);
+        
+      /*  for (int i = 0; i < points.length; i++) {
+            System.out.println(points[i]);
+        } */
         
         checkNullAndDuplicateEntry(points);
         
@@ -19,7 +25,7 @@ public class BruteCollinearPoints {
         segments = new LineSegment[points.length];
         int counter = 0;
         
-        Arrays.sort(points);
+        
         
         for (int i = 0; i < points.length; i++) {
                    
@@ -30,16 +36,17 @@ public class BruteCollinearPoints {
                 for (int k = j + 1; k < points.length; k++) {
                     
                     slope2 = points[k].slopeTo(points[j]);
-                    if (slope2 != slope1) continue;
+                    if (slope2 == slope1) {
                     
-                    for (int ii = k + 1; ii  < points.length; ii++) {
+                        for (int ii = k + 1; ii  < points.length; ii++) {
                         
-                        slope3 = points[ii].slopeTo(points[k]);
-                        if (slope3 == slope2) {
-                            //Point[] tempPoints = {points[i], points[j], points[k], points[ii]};
-                            LineSegment tempLineSegment = new LineSegment(points[i], points[ii]);
-                            System.out.println(counter);
-                            segments[counter++] = tempLineSegment;
+                            slope3 = points[ii].slopeTo(points[k]);
+                            if (slope3 == slope2) {
+                             // Point[] tempPoints = {points[i], points[j], points[k], points[ii]};
+                                LineSegment tempLineSegment = new LineSegment(points[i], points[ii]);
+                                // System.out.println(counter);
+                                segments[counter++] = tempLineSegment;
+                            }
                             
                         }
                         
@@ -47,6 +54,7 @@ public class BruteCollinearPoints {
                 }
             }
         }
+        sanitize(segments, counter);
         
     }
     
@@ -58,22 +66,34 @@ public class BruteCollinearPoints {
         return segments;
     }
     
-    /*private LineSegment savePoints(Point[] points) {
+    /* private LineSegment savePoints(Point[] points) {
         
         Arrays.sort(points);
         
         
         return null;
-    }*/
+    } */
     
     private void checkNullAndDuplicateEntry(Point[] points) {
         
-        if (points[0] == null) throw new IllegalArgumentException("Points can't be null or duplicate");
+        if (points[0].equals(null)) throw new IllegalArgumentException("Points can't be null or duplicate");
         
         for (int i = 1; i < points.length; i++) {
-            if (points[i] == null) throw new IllegalArgumentException("Points can't be null or duplicate");
-            if (points[i - 1] == points[i]) throw new IllegalArgumentException("Points can't be null or duplicate");
+            if (points[i].equals(null)) throw new IllegalArgumentException("Points can't be null or duplicate");
+            if (points[i - 1].equals(points[i])) throw new IllegalArgumentException("Points can't be null or duplicate");
         }
+        
+    }
+    
+    private void sanitize(LineSegment[] segments, int counter) {
+        
+        LineSegment[] temp = new LineSegment[counter];
+        
+        for (int i = 0; i < counter; i++) {
+            temp[i] = segments[i];
+        }
+        
+        this.segments = temp;
         
     }
     
@@ -90,30 +110,37 @@ public class BruteCollinearPoints {
             
             points[i] = new Point(x, y);
             
-            //System.out.println(points[i]);
+            // System.out.println(points[i]);
         }
         
-        /*System.out.println();  
+        /* System.out.println();  
         
         Arrays.sort(points);
         
         for (int i = 0; i < n; i++) {
             System.out.println(points[i]);
-        }*/
+        } */
         
         
-          StdDraw.enableDoubleBuffering(); StdDraw.setXscale(0, 32768);
+          StdDraw.enableDoubleBuffering(); 
+          StdDraw.setXscale(0, 32768);
           StdDraw.setYscale(0, 32768);
           
-          for (Point p : points) { p.draw(); }
-          
-          StdDraw.show();
-          
-          BruteCollinearPoints collinear = new BruteCollinearPoints(points); for
-          (LineSegment line: collinear.segments()) { StdOut.println(line); line.draw();
+          for (Point p : points) {
+              p.draw(); 
           }
           
           StdDraw.show();
+          
+          BruteCollinearPoints collinear = new BruteCollinearPoints(points); 
+           for (LineSegment line: collinear.segments()){
+              
+              if (!line.equals(null)) {
+                  StdOut.println(line); line.draw();
+              }
+          }
+          
+          StdDraw.show(); 
           
           StdOut.println(collinear.numberOfSegments());
          
