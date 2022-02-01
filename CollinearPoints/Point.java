@@ -17,7 +17,7 @@ public class Point implements Comparable<Point> {
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
-    //private int count;
+    // private int count;
 
     /**
      * Initializes a new point.
@@ -29,7 +29,7 @@ public class Point implements Comparable<Point> {
         /* DO NOT MODIFY */
         this.x = x;
         this.y = y;
-        //count = 0;
+        // count = 0;
     }
 
     /**
@@ -93,7 +93,7 @@ public class Point implements Comparable<Point> {
         if (this.y > that.y) return 1;
         if (this.y == that.y) {
             if (this.x < that.x) return -1;
-            if (this.x > that.x)return 1; 
+            if (this.x > that.x) return 1; 
         }
         return 0;
     }
@@ -111,7 +111,7 @@ public class Point implements Comparable<Point> {
     
     private class SortBySlope implements Comparator<Point> {
         
-        public int compare (Point p1, Point p2) {
+        public int compare(Point p1, Point p2) {
             
             if (slopeTo(p1) < slopeTo(p2)) return -1;
             if (slopeTo(p1) > slopeTo(p2)) return 1;

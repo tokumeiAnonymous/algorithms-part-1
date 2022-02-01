@@ -4,52 +4,56 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
+/*
+ * Get segments with 4 collinear points
+ * Limitation: Does not work with points that has more than 4 collinear points
+ */
+
 public class BruteCollinearPoints {
     
-    // private Point[] points;
     private LineSegment[] segments;
     
     public BruteCollinearPoints(Point[] points) {
         
         if (points == null) throw new IllegalArgumentException("Point can not be null");
         
-        Arrays.sort(points);
+        Point[] p = new Point[points.length];
         
-      /*  for (int i = 0; i < points.length; i++) {
-            System.out.println(points[i]);
-        } */
+        System.arraycopy(points, 0, p, 0, points.length);
         
-        checkNullAndDuplicateEntry(points);
+        checkNullEntry(p);
+        
+        Arrays.sort(p);
+        checkDuplicateEntry(p);
         
         double slope1, slope2, slope3;
-        segments = new LineSegment[points.length];
+        segments = new LineSegment[p.length];
         int counter = 0;
         
         
         
-        for (int i = 0; i < points.length; i++) {
+        for (int i = 0; i < p.length; i++) {
                    
-            for (int j = i + 1; j < points.length; j++) {
+            for (int j = i + 1; j < p.length; j++) {
                  
-                slope1 = points[j].slopeTo(points[i]);
+                slope1 = p[j].slopeTo(p[i]);
                 
                 for (int k = j + 1; k < points.length; k++) {
                     
-                    slope2 = points[k].slopeTo(points[j]);
+                    slope2 = p[k].slopeTo(p[j]);
                     if (slope2 == slope1) {
                     
-                        for (int ii = k + 1; ii  < points.length; ii++) {
+                        for (int ii = k + 1; ii  < p.length; ii++) {
                         
-                            slope3 = points[ii].slopeTo(points[k]);
+                            slope3 = p[ii].slopeTo(p[k]);
                             if (slope3 == slope2) {
                              // Point[] tempPoints = {points[i], points[j], points[k], points[ii]};
-                                LineSegment tempLineSegment = new LineSegment(points[i], points[ii]);
+                                LineSegment tempLineSegment = new LineSegment(p[i], p[ii]);
                                 // System.out.println(counter);
+                                // System.out.println(p[i] + ", " + p[j] + ", " + p[k] + ", " + p[ii]);
                                 segments[counter++] = tempLineSegment;
                             }
-                            
                         }
-                        
                     }
                 }
             }
@@ -63,34 +67,36 @@ public class BruteCollinearPoints {
     }
 
     public LineSegment[] segments() {
-        return segments;
+        LineSegment[] temp = new LineSegment[segments.length];
+        
+        System.arraycopy(segments, 0, temp, 0, segments.length);
+        
+        return temp;
     }
     
-    /* private LineSegment savePoints(Point[] points) {
-        
-        Arrays.sort(points);
-        
-        
-        return null;
-    } */
-    
-    private void checkNullAndDuplicateEntry(Point[] points) {
-        
-        if (points[0].equals(null)) throw new IllegalArgumentException("Points can't be null or duplicate");
-        
-        for (int i = 1; i < points.length; i++) {
-            if (points[i].equals(null)) throw new IllegalArgumentException("Points can't be null or duplicate");
-            if (points[i - 1].equals(points[i])) throw new IllegalArgumentException("Points can't be null or duplicate");
+    private void checkDuplicateEntry(Point[] p) {      
+        for (int i = 1; i < p.length; i++) {
+            if (p[i - 1].equals(p[i])) throw new IllegalArgumentException("Points can't be null or duplicate");
         }
         
     }
     
-    private void sanitize(LineSegment[] segments, int counter) {
+    private void checkNullEntry(Point[] p) {
+        for (int i = 0; i < p.length; i++) {
+            if (p[i] == null) throw new IllegalArgumentException("Points can't be null or duplicate");
+        }
+    }
+    
+    /*
+     * Removes the null entries since we declare 
+     * a LineSegment array with the length equals to points
+     */
+    private void sanitize(LineSegment[] argSegments, int counter) {
         
         LineSegment[] temp = new LineSegment[counter];
         
         for (int i = 0; i < counter; i++) {
-            temp[i] = segments[i];
+            temp[i] = argSegments[i];
         }
         
         this.segments = temp;
@@ -133,10 +139,11 @@ public class BruteCollinearPoints {
           StdDraw.show();
           
           BruteCollinearPoints collinear = new BruteCollinearPoints(points); 
-           for (LineSegment line: collinear.segments()){
+           for (LineSegment line: collinear.segments()) {
               
-              if (!line.equals(null)) {
-                  StdOut.println(line); line.draw();
+              if (line != null) {
+                  StdOut.println(line); 
+                  line.draw();
               }
           }
           

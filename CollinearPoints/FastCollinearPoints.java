@@ -13,36 +13,39 @@ public class FastCollinearPoints {
         
         if (points == null) throw new IllegalArgumentException("Points can't be null or duplicate");
         
-        Arrays.sort(points);
-        checkNullAndDuplicateEntry(points);
+        Point[] p = new Point[points.length];
+        
+        System.arraycopy(points, 0, p, 0, points.length);
+        Arrays.sort(p);
+        checkNullAndDuplicateEntry(p);
         
         segments = new LineSegment[points.length];
-        slopes = new double[points.length];
+        slopes = new double[p.length];
         n = 0;
         
         // this part creates a new array excluding 1 point that acts as base
-        for (int i = 0; i < points.length; i++) {
+        for (int i = 0; i < p.length; i++) {
             
-            Point source = points[i];
-            Point[] targets = new Point[points.length - 1];
+            Point source = p[i];
+            Point[] targets = new Point[p.length - 1];
             int k = 0;
             
-            for (int j = 0; j < points.length; j++) {
+            for (int j = 0; j < p.length; j++) {
                 
-                if (source.equals(points[j])) continue;
-                targets[k++] = points[j];
+                if (source.equals(p[j])) continue;
+                targets[k++] = p[j];
             }
            
             Arrays.sort(targets, source.slopeOrder());
            
-            getCollinear(targets, source);
+            collinear(targets, source);
         }
         
         
         
     }
     
-    private void getCollinear(Point[] targets, Point source) {
+    private void collinear(Point[] targets, Point source) {
         
         double prevSlope = source.slopeTo(targets[0]);
         int counter = 1;
@@ -54,7 +57,7 @@ public class FastCollinearPoints {
             if (slope == prevSlope) counter++;
             else {
                 // System.out.println();
-                if(counter >= 3) {
+                if (counter >= 3) {
                     
                     
                     if (!slopeAdded(slope)) {
@@ -71,7 +74,8 @@ public class FastCollinearPoints {
                     collinear[0] = source;
                     addCollinearSegment(collinear);
                     
-                }}
+                }
+             }
                 // resets the counter and slope
                 counter = 0;
                 prevSlope = slope;
@@ -83,7 +87,7 @@ public class FastCollinearPoints {
     
     private boolean slopeAdded(double slope) {
         for (int i = 0; i < segments.length; i++) {
-            if (Double.compare(slope, slopes[i]) == 0) {
+            if (slope - slopes[i] == 0) {
             // System.out.println(slopes[i] + "   " + slope + true);
             return true;
             }
@@ -99,13 +103,13 @@ public class FastCollinearPoints {
         segments[n++] = new LineSegment(points[0], points[points.length -1]);
     }
     
-    private void checkNullAndDuplicateEntry(Point[] points) {
+    private void checkNullAndDuplicateEntry(Point[] p) {
         
-        if (points[0].equals(null)) throw new IllegalArgumentException("Points can't be null or duplicate");
+        if (p[0] == null) throw new IllegalArgumentException("Points can't be null or duplicate");
         
-        for (int i = 1; i < points.length; i++) {
-            if (points[i].equals(null)) throw new IllegalArgumentException("Points can't be null or duplicate");
-            if (points[i - 1].equals(points[i])) throw new IllegalArgumentException("Points can't be null or duplicate");
+        for (int i = 1; i < p.length; i++) {
+            if (p[i] == null) throw new IllegalArgumentException("Points can't be null or duplicate");
+            if (p[i - 1].equals(p[i])) throw new IllegalArgumentException("Points can't be null or duplicate");
         }
         
     }
@@ -115,7 +119,11 @@ public class FastCollinearPoints {
     }
 
     public LineSegment[] segments() {
-        return segments;
+        LineSegment[] temp = new LineSegment[segments.length];
+        
+        System.arraycopy(segments, 0, temp, 0, segments.length);
+        
+        return temp;
     }
     
     public static void main(String[] args) {
@@ -156,8 +164,9 @@ public class FastCollinearPoints {
           FastCollinearPoints collinear = new FastCollinearPoints(points); 
            for (LineSegment line: collinear.segments()){
               
-              if (!line.equals(null)) {
-                  StdOut.println(line); line.draw();
+              if (line != null) {
+                  StdOut.println(line); 
+                  line.draw();
               }
           }
           
