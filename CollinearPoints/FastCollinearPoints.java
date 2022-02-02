@@ -6,7 +6,7 @@ import edu.princeton.cs.algs4.StdOut;
 public class FastCollinearPoints {
     
     private LineSegment[] segments;
-    private double[] slopes;
+    private Double[] slopes;
     private int n;
     
     public FastCollinearPoints(Point[] points) {
@@ -16,102 +16,133 @@ public class FastCollinearPoints {
         Point[] p = new Point[points.length];
         
         System.arraycopy(points, 0, p, 0, points.length);
+        checkNullEntry(p);
+        
         Arrays.sort(p);
-        checkNullAndDuplicateEntry(p);
+        checkDuplicateEntry(p);
         
         segments = new LineSegment[points.length];
-        slopes = new double[p.length];
         n = 0;
+        slopes = new Double[points.length];
         
         // this part creates a new array excluding 1 point that acts as base
         for (int i = 0; i < p.length; i++) {
             
             Point source = p[i];
-            Point[] targets = new Point[p.length - 1];
+            Point[] targets = new Point[p.length - i - 1];
             int k = 0;
             
-            for (int j = 0; j < p.length; j++) {
-                
-                if (source.equals(p[j])) continue;
+            for (int j = i + 1; j < p.length; j++) {
+               
                 targets[k++] = p[j];
+               
             }
            
             Arrays.sort(targets, source.slopeOrder());
-           
-            collinear(targets, source);
+           //do not filter if targets has less than three points
+            if (targets.length >= 3) filterCollinear(targets, source);
         }
+        
+        removeNull();
         
         
         
     }
     
-    private void collinear(Point[] targets, Point source) {
-        
-        double prevSlope = source.slopeTo(targets[0]);
+    private void filterCollinear(Point[] targets, Point source) {
+                         
         int counter = 1;
         
         for (int i = 1; i < targets.length; i++) {
             
-            double slope = source.slopeTo(targets[i]);
-            // System.out.print(slope + " ");
-            if (slope == prevSlope) counter++;
+            if (Double.compare(source.slopeTo(targets[i]), source.slopeTo(targets[i - 1])) == 0) {
+                counter++;
+            }
+            
             else {
-                // System.out.println();
                 if (counter >= 3) {
                     
                     
-                    if (!slopeAdded(slope)) {
+                    if (!isSlopeAdded(source.slopeTo(targets[i - 1]))) {
 
-                    // stores the points and the source to be used as an argument later
 
-                    slopes[n] = slope;
-                    int length = counter + 1;
-                    // System.out.println(length);
-                    Point[] collinear = new Point[length];
-                    for (int j = i; j > i - counter; j--) {
-                        collinear[--length] = targets[j];
-                    }
-                    collinear[0] = source;
-                    addCollinearSegment(collinear);
+                    slopes[n] = source.slopeTo(targets[i - 1]);
                     
+                    segments[n++] = new LineSegment(source, targets[i]);
+                    
+                    // stores the points
+                    /* Point[] collinearPoints = new Point[counter + 1];
+                    int k = 0;
+                    collinearPoints[k++] = source;
+                    for (int j = i - 1; j >= i - counter; j--) {
+                        
+                        collinearPoints[k++] = targets[j];
+                        
+                    } 
+                    
+                    addEdgePoints(collinearPoints); 
+                    */
+                          
                 }
              }
                 // resets the counter and slope
-                counter = 0;
-                prevSlope = slope;
+                
+                counter = 1;
+                // prevSlope = slope;
             }
          
         }
+        // if the last point has equal slope and counter >= 3
+        if (counter >= 3 && !isSlopeAdded(source.slopeTo(targets[targets.length - 1]))) {
+            segments[n++] = new LineSegment(source, targets[targets.length - 1]);
+        }
+        
         
     }
-    
-    private boolean slopeAdded(double slope) {
-        for (int i = 0; i < segments.length; i++) {
-            if (slope - slopes[i] == 0) {
-            // System.out.println(slopes[i] + "   " + slope + true);
+    /*
+    private void addEdgePoints(Point[] collinearPoints) {
+        
+        Arrays.sort(collinearPoints);
+        
+        segments[n++] = new LineSegment(collinearPoints[0], collinearPoints[collinearPoints.length - 1]);
+        
+    }
+   */
+    private boolean isSlopeAdded(double slope) {
+        
+        int i = 0;
+        while (slopes[i] != null) {
+            if (Double.compare(slope, slopes[i]) == 0) {
             return true;
             }
-            // System.out.println(slopes[i] + "   " + slope + false);
+            i++;
         }
         
         return false;
     }
-    
-    private void addCollinearSegment(Point[] points) {
-        Arrays.sort(points);
-        // System.out.println(n);
-        segments[n++] = new LineSegment(points[0], points[points.length -1]);
+     
+    private void removeNull() {
+        LineSegment[] temp = new LineSegment[n];
+        
+        for (int i = 0; i < n; i++) {
+            temp[i] = segments[i];
+        }
+        
+        segments = temp;
+        
     }
     
-    private void checkNullAndDuplicateEntry(Point[] p) {
-        
-        if (p[0] == null) throw new IllegalArgumentException("Points can't be null or duplicate");
-        
+    private void checkDuplicateEntry(Point[] p) {      
         for (int i = 1; i < p.length; i++) {
-            if (p[i] == null) throw new IllegalArgumentException("Points can't be null or duplicate");
             if (p[i - 1].equals(p[i])) throw new IllegalArgumentException("Points can't be null or duplicate");
         }
         
+    }
+    
+    private void checkNullEntry(Point[] p) {
+        for (int i = 0; i < p.length; i++) {
+            if (p[i] == null) throw new IllegalArgumentException("Points can't be null or duplicate");
+        }
     }
     
     public int numberOfSegments() {
