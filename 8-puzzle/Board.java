@@ -1,34 +1,31 @@
-import java.util.Stack;
+import edu.princeton.cs.algs4.Stack;
 
 public class Board {
 
-    private final int[][] board;
+    private int[][] board;
     private int hammingCount;
     private int manhattanCount;
-    private final int[][] goalBoard;
     private int emptyI;
     private int emptyJ;
+    private final StringBuilder boardString;
     
     // @param 2 <= n <= 128
     public Board(int[][] tiles) {
         
-        board = tiles;
+        if (tiles == null) throw new IllegalArgumentException("Board can't be null");
+        
         hammingCount = 0;
         manhattanCount = 0;
         
-        goalBoard = new int[board.length][board[0].length];
-        int tempCounter = 1;
+        boardString = new StringBuilder("" + this.dimension() + "\n ");
+                
         
-        for (int i = 0; i < goalBoard.length; i++) {
-            for (int j = 0; j < goalBoard[i].length; j++) {
-                
-                
-                goalBoard[i][j] = tempCounter++;
-                if (tempCounter == goalBoard.length * goalBoard.length) {
-                    break;
-                }
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                board[i][j] = tiles[i][j];
+                boardString.append(board[i][j] + "  ");
             }
-            
+            boardString.append("\n ");
         }
         
         calculateDistances();
@@ -37,16 +34,7 @@ public class Board {
     
     public String toString() {
         
-        String boardString = "" + this.dimension() + "\n ";
-        
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                boardString += board[i][j] + "  ";
-            }
-            boardString += "\n ";
-        }
-        
-        return boardString;
+        return boardString.toString();
     }
     
     public int dimension() {
@@ -112,12 +100,13 @@ public class Board {
     
     public boolean equals(Object y) {
         
-        Board temp = (Board) y;
+        if (y == null) return false;
+        if (y == this) return true;
+        if (y.getClass() != this.getClass()) return false;
         
-        String tempString1 = this.toString();
-        String tempString2 = temp.toString();
+        // Board temp = (Board) y;
         
-        return tempString1.equals(tempString2);        
+        return this.toString().equals(y.toString());
     }
     
     public Iterable<Board> neighbors() {
