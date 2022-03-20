@@ -8,7 +8,7 @@ public class Solver {
     public Solver(Board initial) {
         // update this
         board = initial;
-        MinPQ priorityQueue = new MinPQ();
+        MinPQ<Board> priorityQueue = new MinPQ<Board>();
         
         // just to satisfy the error
         initial.manhattan();
