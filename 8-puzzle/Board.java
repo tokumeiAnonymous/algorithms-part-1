@@ -2,7 +2,7 @@ import edu.princeton.cs.algs4.Stack;
 
 public class Board {
 
-    private int[][] board;
+    private final int[][] board;
     private int hammingCount;
     private int manhattanCount;
     private int emptyI;
@@ -13,6 +13,7 @@ public class Board {
     public Board(int[][] tiles) {
         
         if (tiles == null) throw new IllegalArgumentException("Board can't be null");
+        board = new int[tiles.length][tiles.length];
         
         hammingCount = 0;
         manhattanCount = 0;
@@ -54,11 +55,11 @@ public class Board {
     
     private void calculateDistances() {
         
-        int tempCounter = 1;
+        int tempCounter = 0;
         
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                
+                tempCounter++;
                 // for the empty position
                 if (board[i][j] == 0) {
                     emptyI = i;
@@ -66,12 +67,10 @@ public class Board {
                     continue;
                 }
                 
-                if (board[i][j] != tempCounter++) {
+                if (board[i][j] != tempCounter) {
                     hammingCount++;
                     manhattanCount += calculateManhattan(i, j, board[i][j]);
                 }
-                // this prevents to check the supposed empty position
-                if (tempCounter == board.length * board.length) return; 
             }
         }
     }
@@ -82,10 +81,11 @@ public class Board {
         int correctJ = 0;
 
         if (value % board.length == 0) {
-            correctI = value / board.length;
-            correctJ = board.length;
+            // since array starts at 0
+            correctI = (value / board.length) - 1;
+            correctJ = board.length - 1;
         } else {
-            correctI = (value / board.length) + 1;
+            correctI = (value / board.length);
             correctJ = (value % board.length) - 1;
             
         }
@@ -115,9 +115,9 @@ public class Board {
         
         // this will set true for corners that is out of bounds/edges
         boolean addedTop = emptyI == 0;
-        boolean addedBottom = emptyI == board.length;
+        boolean addedBottom = emptyI == board.length - 1;
         boolean addedLeft = emptyJ == 0;
-        boolean addedRight = emptyJ == board.length;
+        boolean addedRight = emptyJ == board.length - 1;
         
         
         if (!addedTop) {
@@ -142,7 +142,13 @@ public class Board {
     
     // code 1 = top, 2 = bottom, 3 = left, 4 = right;
     private Board getNeighborBoard(int pos) {
-        int[][] tempBoard = board;
+        int[][] tempBoard = new int[board.length][board.length];
+        
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                tempBoard[i][j] = board[i][j];
+            }
+        }
         
         if (pos == 1) {
             tempBoard[emptyI][emptyJ] = tempBoard[emptyI - 1][emptyJ];
