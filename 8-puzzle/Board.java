@@ -19,7 +19,6 @@ public class Board {
         manhattanCount = 0;
         
         boardString = new StringBuilder("" + this.dimension() + "\n ");
-                
         
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -64,7 +63,7 @@ public class Board {
                 if (board[i][j] == 0) {
                     emptyI = i;
                     emptyJ = j;
-                    continue;
+                   continue;
                 }
                 
                 if (board[i][j] != tempCounter) {
@@ -104,8 +103,6 @@ public class Board {
         if (y == this) return true;
         if (y.getClass() != this.getClass()) return false;
         
-        // Board temp = (Board) y;
-        
         return this.toString().equals(y.toString());
     }
     
@@ -142,13 +139,7 @@ public class Board {
     
     // code 1 = top, 2 = bottom, 3 = left, 4 = right;
     private Board getNeighborBoard(int pos) {
-        int[][] tempBoard = new int[board.length][board.length];
-        
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                tempBoard[i][j] = board[i][j];
-            }
-        }
+        int[][] tempBoard = copyBoard();
         
         if (pos == 1) {
             tempBoard[emptyI][emptyJ] = tempBoard[emptyI - 1][emptyJ];
@@ -169,7 +160,40 @@ public class Board {
     
     public Board twin() {
         
-        return null;
+        int rowA = 0;
+        int colA = 0;
+        int rowB = 0;
+        int colB = 0;
+        
+        if (rowA == emptyI && colA == emptyJ) {
+            if (rowA < board.length - 1) rowA++;
+            else colA++;
+        }
+        while ((rowA == rowB && colA == colB) || (rowB == emptyI && colB == emptyJ)) {
+            if (rowB < board.length - 1) rowB++;
+            else colB++;
+        }
+        
+        
+        int[][] tempBoard = copyBoard();
+        
+        int temp = tempBoard[rowA][colA];
+        tempBoard[rowA][colA] = tempBoard[rowB][colB];
+        tempBoard[rowB][colB] = temp;
+        
+        return new Board(tempBoard);
+    }
+    
+    private int[][] copyBoard() {
+        
+        int[][] tempBoard = new int[board.length][board.length];
+        
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                tempBoard[i][j] = board[i][j];
+            }
+        }
+        return tempBoard;
     }
     
     public static void main(String[] args) {
